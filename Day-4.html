@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Single Page App with BOM</title>
+  <style>
+    body { font-family: "Times New Roman", serif; margin:0; }
+    nav  { background:#222; padding:10px; }
+    nav a { color:white; margin-right:15px; cursor:pointer; text-decoration:none; }
+    .page { display:none; padding:20px; }
+    .active { display:block; }
+    .err { color:red; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a onclick="showPage('home')">Home</a>
+    <a onclick="showPage('login')">Login</a>
+    <a onclick="showPage('info')">Browser Info</a>
+  </nav>
+
+  <div id="home" class="page active">
+    <h2>Home</h2>
+    <p id="welcome"></p>
+    <button onclick="history.back()">Back</button>
+    <button onclick="history.forward()">Forward</button>
+    <button onclick="window.open('https://www.google.com','_blank','width=500,height=400')">
+      Open New Window</button>
+  </div>
+
+  <div id="login" class="page">
+    <h2>Login</h2>
+    <input type="text" id="user" placeholder="Username"><br><br>
+    <input type="password" id="pwd" placeholder="Password"><br>
+    <span id="msg" class="err"></span><br>
+    <button onclick="doLogin()">Login</button>
+    <button onclick="logout()">Delete Cookie</button>
+  </div>
+
+  <div id="info" class="page">
+    <h2>Browser Information</h2>
+    <div id="details"></div>
+  </div>
+
+  <script>
+    
+    function showPage(id) {
+      var pages = document.getElementsByClassName("page");
+      for (var i = 0; i < pages.length; i++) { pages[i].classList.remove("active"); }
+      document.getElementById(id).classList.add("active");
+      history.pushState({ page: id }, "", "#" + id);
+      if (id === "info") { loadInfo(); }
+    }
+    window.onpopstate = function (e) {
+      if (e.state) {
+        var pages = document.getElementsByClassName("page");
+        for (var i = 0; i < pages.length; i++) { pages[i].classList.remove("active"); }
+        document.getElementById(e.state.page).classList.add("active");
+      }
+    };
+
+    function setCookie(name, value, days) {
+      var d = new Date();
+      d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+      document.cookie = name + "=" + value + "; expires=" + d.toUTCString() + "; path=/";
+    }
+    function getCookie(name) {
+      var parts = document.cookie.split("; ");
+      for (var i = 0; i < parts.length; i++) {
+        var kv = parts[i].split("=");
+        if (kv[0] === name) { return kv[1]; }
+      }
+      return "";
+    }
+
+    function doLogin() {
+      var u = document.getElementById("user").value.trim();
+      var p = document.getElementById("pwd").value;
+      var m = document.getElementById("msg");
+      if (u.length < 3) { m.innerHTML = "Username must be at least 3 characters"; return; }
+      if (p.length < 6) { m.innerHTML = "Password must be at least 6 characters"; return; }
+      m.innerHTML = "";
+      setCookie("username", u, 7);
+      showWelcome();
+      showPage("home");
+    }
+    function logout() {
+      setCookie("username", "", -1);
+      showWelcome();
+      alert("Cookie deleted");
+    }
+    function showWelcome() {
+      var u = getCookie("username");
+      document.getElementById("welcome").innerHTML =
+        u ? "Welcome back, <b>" + u + "</b>!" : "Welcome, Guest! Please login.";
+    }
+
+    function loadInfo() {
+      document.getElementById("details").innerHTML =
+        "<b>Window size:</b> " + window.innerWidth + " x " + window.innerHeight + "<br>" +
+        "<b>Screen size:</b> " + screen.width + " x " + screen.height + "<br>" +
+        "<b>URL (location.href):</b> " + location.href + "<br>" +
+        "<b>Protocol:</b> " + location.protocol + "<br>" +
+        "<b>Hostname:</b> " + location.hostname + "<br>" +
+        "<b>History length:</b> " + history.length + "<br>" +
+        "<b>Browser (userAgent):</b> " + navigator.userAgent + "<br>" +
+        "<b>Platform:</b> " + navigator.platform + "<br>" +
+        "<b>Language:</b> " + navigator.language + "<br>" +
+        "<b>Online:</b> " + navigator.onLine + "<br>" +
+        "<b>Cookies enabled:</b> " + navigator.cookieEnabled;
+    }
+
+    showWelcome();
+  </script>
+</body>
+</html>
