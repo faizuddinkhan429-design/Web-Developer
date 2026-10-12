@@ -1,0 +1,43 @@
+body {
+  background-color: #f0f8ff;
+  font-family: "Times New Roman", serif;
+}
+h1 {
+  color: navy;
+  text-align: center;
+  text-decoration: underline;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>CSS Types</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    p {
+      color: darkgreen;
+      font-size: 18px;
+      line-height: 1.6;
+      text-align: justify;
+      border: 2px solid green;
+      margin: 20px;
+      padding: 15px;
+    }
+    .box {
+      border: 3px dashed red;
+      margin: 10px auto;
+      padding: 10px;
+      width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Types of CSS</h1>
+  <p>This paragraph is styled by internal CSS.</p>
+  <div class="box">This box is styled by an internal class.</div>
+  <p style="color:white; background-color:purple; border:4px double black;">
+     This paragraph is styled by inline CSS.
+  </p>
+</body>
+</html>
